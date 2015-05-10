@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<title>untitled</title>
+	<meta name="generator" content="Geany 1.25" />
+	
+	<style type="text/css">
+		table+table
+		{
+			margin-top: 100px
+		}
+	</style>
+
+</head>
+
+<body>
+<script>
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+
+	//returns a random multiplicand
+	//pre : parameters contain the min and max length of multiplicand
+	function getMultiplicand(nDigitsMin,nDigitsMax)
+	{
+			if(nDigitsMax<nDigitsMin)
+			{
+				return -1;
+			}
+			
+			//randomly select no of digits
+			var randomNum = Math.floor(Math.random() * 10000) //randomly gets a 4 digit integer
+
+			var rNumberLen = (randomNum % (nDigitsMax - nDigitsMin + 1)) + (nDigitsMin * 1);
+						
+			//generate a random number of selected length
+			var lowerL = Math.pow(10, rNumberLen-1);
+			var upperL = Math.pow(10, rNumberLen) - 1;
+			
+			//randomly gets a 10 digit integer
+			randomNum = Math.floor(Math.random() * 1000000000)
+
+			var multiplicand = (randomNum % (upperL - lowerL + 1)) + (lowerL * 1);
+			
+			return multiplicand;
+	}
+	
+////////////////////////////////////////////////////////////////////////	
+////////////////////////////////////////////////////////////////////////
+
+	//returns a random multiplier from an array
+	//pre : an array with integers is passed as parameter
+	function getMultiplier(fromArray)
+	{
+		//check if array has no values
+		if(!fromArray.length)
+		{
+			return -1;
+		}
+		
+		//get array index limits
+		var nMin = 0;
+		var nMax = fromArray.length - 1;
+				
+		//randomly select an element from array
+		var randomNum = Math.floor(Math.random() * 10000) //randomly gets a 4 digit integer
+		var rIndex = (randomNum % (nMax - nMin + 1)) + nMin; //randomly selects an index within range
+		var multiplier = fromArray[rIndex];
+		
+		return multiplier;
+	}
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+
+	function drawTable(nDigitsMin, nDigitsMax, b_list, numTables, numRows)
+	{
+		// get the reference for the body
+		var body = document.getElementsByTagName("body")[0];
+		
+		for (var t=1; t<=numTables; t++)
+		{
+			// creates a <table> element and a <tbody> element
+			var tbl     = document.createElement("table");
+			var tblBody = document.createElement("tbody");
+			
+			var multiplicand = 0;
+			var multiplier = 0;
+
+			// creating all cells
+			for (var i = 0; i < numRows; i++)
+			{
+				// creates a table row
+				var row = document.createElement("tr");
+				
+				multiplicand = getMultiplicand(nDigitsMin,nDigitsMax);
+				multiplier = getMultiplier(b_list);
+
+				for (var j = 0; j < 5; j++)
+				{
+					// Create a <td> element and a text node, make the text
+					// node the contents of the <td>, and put the <td> at
+					// the end of the table row
+					var cell = document.createElement("td");
+
+					if(!(i%2))
+					{
+						if(j==0)
+						{
+							cell.style.textAlign = 'right';
+							var cellText = document.createTextNode(multiplicand);
+						}
+						else if(j==1)
+						{
+							var cellText = document.createTextNode("X");
+						}
+						else if(j==2)
+						{
+							var cellText = document.createTextNode(multiplier);
+						}
+						else if(j==4)
+						{
+							cell.style.textAlign = 'right';
+							var result  = multiplicand * multiplier;
+							var cellText = document.createTextNode(result);
+						}
+						else
+						{
+							var cellText = document.createTextNode("");
+							cell.style.width = '500px';
+							//var cellText = document.createTextNode("cell in row "+i+", column "+j);
+						}
+					}
+					else
+					{
+						var cellText = document.createTextNode("");
+						cell.style.height = '100px';
+					}
+
+					cell.appendChild(cellText);
+					row.appendChild(cell);
+				}
+
+				// add the row to the end of the table body
+				tblBody.appendChild(row);
+			}
+
+			// put the <tbody> in the <table>
+			tbl.appendChild(tblBody);
+			// appends <table> into <body>
+
+			body.appendChild(tbl);
+			// sets the border attribute of tbl to 2;
+			tbl.setAttribute("border", "1");
+			
+			//document.write("<br/><br/>");
+		}
+	}
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+function gen_excercise()
+{
+	//get no of multuplier selected
+	var b_ids = new Array("a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8", "a9", "a10", "a11", "a12");
+	var nMultipliers=0;
+	
+	var index;
+	for (index=0; index<b_ids.length; index++)
+	{	
+		if(document.getElementById(b_ids[index]).checked)
+		{
+			nMultipliers = nMultipliers + 1
+		}
+	}
+	//alert(nMultipliers);
+	
+	//insert selected multipliers into array
+	var b_selected = new Array(nMultipliers);
+	
+	var index2=0;
+	for (index=0; index<b_ids.length; index++)
+	{	
+		if(document.getElementById(b_ids[index]).checked)
+		{
+				b_selected[index2] = document.getElementById(b_ids[index]).value;
+				index2++;
+		}
+	}
+
+	//alert(b_selected);
+	
+	//get the no of digits range of multiplicands
+	var a_dRange_min = document.getElementById("minDigits").value;
+	var a_dRange_max = document.getElementById("maxDigits").value;
+	
+	//alert(a_dRange_min + " - " + a_dRange_max);
+	
+	//get paging info
+	var numTables = document.getElementById("numTables").value;
+	var numRows = document.getElementById("numRows").value;
+	
+	//alert(numTables + " - " + numRows);
+	
+	//remove the form, so table appears as in a fresh page!
+	document.getElementById("formA").remove();
+	
+	drawTable(a_dRange_min, a_dRange_max, b_selected, numTables, numRows);
+	
+}
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+</script>
+	<form id="formA">
+		<br/><br/>
+		<table id="tableA" border=1>
+		  <tr>
+			<th rowspan="12" width="150">Multiplier(s) :</th>
+			<td width="180"><input type=checkbox id="a1" value="1"> 1</td>
+		  </tr>
+		  <tr>
+			<td width="180"><input type=checkbox id="a2" value="2"> 2</td>
+		  </tr>
+		  <tr>
+			<td><input type=checkbox id="a3" value="3"> 3</td>
+		  </tr>
+		  <tr>
+			<td><input type=checkbox id="a4" value="4"> 4</td>
+		  </tr>
+		  <tr>
+			<td><input type=checkbox id="a5" value="5"> 5</td>
+		  </tr>
+		  <tr>
+			<td><input type=checkbox id="a6" value="6"> 6</td>
+		  </tr>
+		  <tr>
+			<td><input type=checkbox id="a7" value="7"> 7</td>
+		  </tr>
+		  <tr>
+			<td><input type=checkbox id="a8" value="8"> 8</td>
+		  </tr>
+		  <tr>
+			<td><input type=checkbox id="a9" value="9"> 9</td>
+		  </tr>
+		  <tr>
+			<td><input type=checkbox id="a10" value="10"> 10</td>
+		  </tr>
+		  <tr>
+			<td><input type=checkbox id="a11" value="11"> 11</td>
+		  </tr>
+		  <tr>
+			<td><input type=checkbox id="a12" value="12"> 12</td>
+		  </tr>
+		</table>
+
+		<br/><br/>
+		
+		<table border=1>
+			<tr>
+				<th rowspan="2" width="150"> Multiplicand : </th>
+
+				<td width="180">
+					<label for=minDigits>Min Digits : </label>
+					<output for=minDigits id=minDigitsLabel></output>
+					<br/>
+					<input type=range min=1 max=9 value=2 id=minDigits oninput="minDigitsOutputUpdate(value)">
+					
+					<script>
+						function minDigitsOutputUpdate(vol)
+						{
+							document.querySelector('#minDigitsLabel').value = document.querySelector('#minDigits').value;
+							document.querySelector('#maxDigits').min = vol;
+							document.querySelector('#maxDigitsLabel').value = document.querySelector('#maxDigits').value;
+						}
+					</script>
+				</td>
+			</tr>
+			<tr>
+				<td width="180">
+					<label for=maxDigits>Max Digits : </label>
+					<output for=maxDigits id=maxDigitsLabel></output>
+					<br/>
+					<input type=range min=1 max=9 value=5 id=maxDigits oninput="maxDigitsOutputUpdate(value)">
+					
+					<script>
+						function maxDigitsOutputUpdate(vol)
+						{
+							document.querySelector('#maxDigitsLabel').value = document.querySelector('#maxDigits').value;
+							document.querySelector('#minDigits').max = vol;
+							document.querySelector('#minDigitsLabel').value = document.querySelector('#minDigits').value;
+						}
+					</script>
+				</td>
+			</tr>
+		</table>
+		
+		<br><br>
+		
+		<table border="1">
+			<tr>
+				<th rowspan="3" width="150">Paging : </th>
+				
+				<td width="180">
+					<label for=numTables>No of Tables : </label>
+					<output for=numTables id=numTablesLabel></output>
+					<br/>
+					<input type=range min=1 max=20 value=2 id=numTables oninput="numTablesOutputUpdate(value)">
+					<script>
+						function numTablesOutputUpdate(vol)
+						{
+							document.querySelector('#numTablesLabel').value = document.querySelector('#numTables').value;
+						}
+					</script>
+				</td>
+			</tr>
+			<tr>
+				<td width="180">
+					<label for=numRows>No of Rows : </label>
+					<output for=numRows id=numRowsLabel></output>
+					<br/>
+					<input type=range min=1 max=60 value=14 id=numRows oninput="numRowsOutputUpdate(value)">
+					<script>
+						function numRowsOutputUpdate(vol)
+						{
+							document.querySelector('#numRowsLabel').value = document.querySelector('#numRows').value;
+						}
+					</script>
+				</td>
+			</tr>
+		</table>
+		
+		<br/><br/>
+		
+		<input type="button" value="Submit" onclick="gen_excercise()">
+	</form>
+</body>
+
+</html>
